@@ -2,6 +2,11 @@
 using Sistema;
 using UnityEngine;
 
+/// <summary>
+/// Test desde visual studio
+/// Si aparece esto en git es que se ha hehco bien
+/// </summary>
+
 namespace Objetos
 {
     class Proyectil : MonoBehaviour
