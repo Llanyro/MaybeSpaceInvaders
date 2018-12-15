@@ -3,8 +3,7 @@ using Sistema;
 using UnityEngine;
 
 /// <summary>
-/// Test desde visual studio
-/// Si aparece esto en git es que se ha hehco bien
+/// Este comentario tenia un poco de retraso
 /// </summary>
 
 namespace Objetos
