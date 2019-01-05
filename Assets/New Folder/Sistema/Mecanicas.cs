@@ -11,65 +11,11 @@ namespace Sistema
         public SistemaDeControlGeneral SistemaDeControlGeneral { get; set; }
 
         //Movimiento de los objetos, players y Enemigos
-        #region
-        /// <summary>
-        /// Mueve un objeto de manera vertical segun el valor que decidammos
-        /// </summary>
-        private void MovimientoVertical(Transform transformObjeto, float value)
+        //public void Mover(Transform transform, Direccion direccion, float VelocidadMovimiento);
+        public void Mover(Transform transform, Vector2 direccion, float VelocidadMovimiento)
         {
-            if (value > 0) if ((transformObjeto.position.y + (Time.deltaTime * value)) >= SistemaDeControlGeneral.TamañoMapa) return;
-            if (value < 0) if ((transformObjeto.position.y + (Time.deltaTime * value)) <= -SistemaDeControlGeneral.TamañoMapa) return;
-
-            transformObjeto.Translate(0, Time.deltaTime * value, 0);
+            transform.Translate(direccion*VelocidadMovimiento);
         }
-        /// <summary>
-        /// Mueve un objeto de manera horizontal segun el valor que decidammos
-        /// </summary>
-        private void MovimientoHorizontal(Transform transformObjeto, float value)
-        {
-            if (value > 0) if ((transformObjeto.position.x + (Time.deltaTime * value)) >= SistemaDeControlGeneral.TamañoMapa) return;
-            if (value < 0) if ((transformObjeto.position.x + (Time.deltaTime * value)) <= -SistemaDeControlGeneral.TamañoMapa) return;
-
-            transformObjeto.Translate(Time.deltaTime * value, 0, 0);
-        }
-
-
-        public void Mover(Transform transformObjeto, Direccion direccion, float value)
-        {
-            switch(direccion)
-            {
-                case (Direccion)1:
-                    MovimientoVertical(transformObjeto, value);
-                    break;
-                case (Direccion)2:
-                    MovimientoVertical(transformObjeto, -1 * value);
-                    break;
-                case (Direccion)3:
-                    MovimientoHorizontal(transformObjeto, value);
-                    break;
-                case (Direccion)4:
-                    MovimientoHorizontal(transformObjeto, -1 *  value);
-                    break;
-                case (Direccion)5:
-                    MovimientoVertical(transformObjeto, value);
-                    MovimientoHorizontal(transformObjeto, value);
-                    break;
-                case (Direccion)6:
-                    MovimientoVertical(transformObjeto, -1 * value);
-                    MovimientoHorizontal(transformObjeto, value);
-                    break;
-                case (Direccion)7:
-                    MovimientoVertical(transformObjeto, value);
-                    MovimientoHorizontal(transformObjeto, -1 * value);
-                    break;
-                case (Direccion)8:
-                    MovimientoVertical(transformObjeto, -1 * value);
-                    MovimientoHorizontal(transformObjeto, -1 * value);
-                    break;
-            }
-        }
-
-        #endregion
 
         //Disparar
         private void DispararProyectilBase(Movimiento causante, float dañoproyectil, Transform posicionDelCausante, Direccion[] direcciones )
@@ -165,7 +111,6 @@ namespace Sistema
                     break;
             }
         }
-
     }
 
 
