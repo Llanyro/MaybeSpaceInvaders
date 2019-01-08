@@ -407,10 +407,12 @@ MonoBehaviour:
   VelocidadMovimientoProyectil: 41
   VelocidadMovimientoProyectilEnemigo: 1
   "Da\xF1oProyectil": 40
+  MaxEnemigosTipo1: 3
   Player: {fileID: 1281332805985352, guid: e8dc078d3971bf6438cfeef527dd38f6, type: 3}
-  Enemigo1: {fileID: 0}
+  Enemigo1: {fileID: 1610982819565586, guid: 3e8fff465baf71846ad29e5a3eeca049, type: 3}
   Proyectil1: {fileID: 1206355819646038, guid: b3162d0b7bdaa774893d570f0652b4b4, type: 3}
   Proyectil2: {fileID: 0}
+  EnemigosTipo1: []
 --- !u!4 &256725450
 Transform:
   m_ObjectHideFlags: 0
@@ -520,7 +522,7 @@ MonoBehaviour:
   m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 1
+  m_FillOrigin: 0
   m_UseSpriteMesh: 0
 --- !u!222 &339713057
 CanvasRenderer:
@@ -1673,7 +1675,7 @@ MonoBehaviour:
   m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 1
+  m_FillOrigin: 0
   m_UseSpriteMesh: 0
 --- !u!222 &1805935798
 CanvasRenderer:

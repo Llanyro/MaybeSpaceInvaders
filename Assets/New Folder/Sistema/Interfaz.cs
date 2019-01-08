@@ -39,50 +39,62 @@ namespace Sistema
 
         //Interfaz players
         #region
-        public void IniciarGUIPlayer(int ID, bool iniciar)
+        public void IniciarGUIPlayer(Entidad entidad, bool iniciar)
         {
-            if (ID == 1) Player1_PadreGui.SetActive(iniciar);
-            else if (ID == 2) Player2_PadreGui.SetActive(iniciar);
+            switch(entidad)
+            {
+                case Entidad.Player1:
+                    Player1_PadreGui.SetActive(iniciar);
+                    break;
+                case Entidad.Player2:
+                    Player2_PadreGui.SetActive(iniciar);
+                    break;
+            }
+        }
+        public void ActualizarGUI(Stats stats)
+        {
+            IniciarGUIPlayer(stats.Struct_Stats.Entidad, true);
+            GUISalud(stats);
+            GUIExperiencia(stats);
+            GUINivel(stats);
         }
 
         public void GUISalud(Stats stats)
         {
-            switch(stats.Struct_Stats.ID)
+            switch(stats.Struct_Stats.Entidad)
             {
-                case 1:
+                case Entidad.Player1:
                     Player1_Barra_Salud.GetComponent<Image>().fillAmount = (stats.Struct_Stats.Salud / (float)stats.Struct_Stats.MaxSalud);
                     Player1_TextoSalud.GetComponent<Text>().text = stats.Struct_Stats.Salud + " / " + stats.Struct_Stats.MaxSalud;
                     break;
-                case 2:
+                case Entidad.Player2:
                     Player2_Barra_Salud.GetComponent<Image>().fillAmount = (stats.Struct_Stats.Salud / (float)stats.Struct_Stats.MaxSalud);
                     Player2_TextoSalud.GetComponent<Text>().text = stats.Struct_Stats.Salud + " / " + stats.Struct_Stats.MaxSalud;
                     break;
             }
         }
-
         public void GUIExperiencia(Stats stats)
         {
-            switch (stats.Struct_Stats.ID)
+            switch (stats.Struct_Stats.Entidad)
             {
-                case 1:
+                case Entidad.Player1:
                     Player1_Barra_Experiencia.GetComponent<Image>().fillAmount = (stats.Struct_Stats.Exp / (float)stats.Struct_Stats.MaxExp);
                     Player1_TextoExperiencia.GetComponent<Text>().text = stats.Struct_Stats.Exp + " / " + stats.Struct_Stats.MaxExp;
                     break;
-                case 2:
+                case Entidad.Player2:
                     Player2_Barra_Experiencia.GetComponent<Image>().fillAmount = (stats.Struct_Stats.Exp / (float)stats.Struct_Stats.MaxExp);
                     Player2_TextoExperiencia.GetComponent<Text>().text = stats.Struct_Stats.Exp + " / " + stats.Struct_Stats.MaxExp;
                     break;
             }
         }
-
         public void GUINivel(Stats stats)
         {
-            switch (stats.Struct_Stats.ID)
+            switch (stats.Struct_Stats.Entidad)
             {
-                case 1:
+                case Entidad.Player1:
                     Player1_TextoNivel.GetComponent<Text>().text = "Nivel: " + stats.Struct_Stats.Nivel;
                     break;
-                case 2:
+                case Entidad.Player2:
                     Player2_TextoNivel.GetComponent<Text>().text = "Nivel: " + stats.Struct_Stats.Nivel;
                     break;
             }

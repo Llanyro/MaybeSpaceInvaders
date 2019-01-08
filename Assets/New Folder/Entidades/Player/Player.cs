@@ -16,7 +16,7 @@ namespace Entidades.Player
         private void Moverse()
         {
             Vector2 direccion = new Vector2(0,0);
-            if (Stats.Struct_Stats.ID == 1)
+            if (Stats.Struct_Stats.Entidad == Entidad.Player1)
             {
                 if (Input.GetKey(KeyCode.A)) direccion.x  = -1;
                 if (Input.GetKey(KeyCode.D))
@@ -32,7 +32,7 @@ namespace Entidades.Player
                     else direccion.y = 0;
                 }
             }
-            else if (Stats.Struct_Stats.ID == 2)
+            else if (Stats.Struct_Stats.Entidad == Entidad.Player2)
             {
                 if (Input.GetKey(KeyCode.LeftArrow)) direccion.x = -1;
                 if (Input.GetKey(KeyCode.RightArrow))
@@ -53,14 +53,14 @@ namespace Entidades.Player
 
         private void Disparar()
         {
-            if (Stats.Struct_Stats.ID == 1)
+            if (Stats.Struct_Stats.Entidad == Entidad.Player1)
             {
-                if (Input.GetKey(KeyCode.Space)) Mecanicas.UsarArma(Stats);
+                if (Input.GetKey(KeyCode.Space)) Mecanicas.UsarArma(Stats, false);
                 else Mecanicas.ReposarArma(Stats);
             }
-            else if(Stats.Struct_Stats.ID == 2)
+            else if(Stats.Struct_Stats.Entidad == Entidad.Player2)
             {
-                if (Input.GetKey(KeyCode.RightShift)) Mecanicas.UsarArma(Stats);
+                if (Input.GetKey(KeyCode.RightShift)) Mecanicas.UsarArma(Stats, false);
                 else Mecanicas.ReposarArma(Stats);
             }
         }
@@ -74,5 +74,21 @@ namespace Entidades.Player
             if (Input.GetKeyDown(KeyCode.O)) Stats.RecibirExperiencia(9);
             if (Input.GetKeyDown(KeyCode.I)) Stats.RecibirCuracion(10);
         }
+
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (collision.tag == "Enemigo")
+            {
+                Stats statstarjet = collision.GetComponent<Stats>();
+                switch(statstarjet.Struct_Stats.Entidad)
+                {
+                    case Entidad.Enemigo1:
+                        Stats.RecibirDaño(100, statstarjet);
+                        Stats.SistemaDeControlGeneral.EliminarEntidad(statstarjet);
+                        break;
+                }
+            }
+        }
+
     }
 }

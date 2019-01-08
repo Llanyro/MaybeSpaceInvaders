@@ -27,6 +27,24 @@ namespace Objetos
         private void OnTriggerEnter2D(Collider2D collision)
         {
             if (collision.tag == "Muro") Destroy(gameObject);
+            if(collision.tag == "Player")
+            {
+                Stats statstarjet = collision.GetComponent<Stats>();
+                if (statstarjet.PoderRecibirDaño(Causante))
+                {
+                    statstarjet.RecibirDaño((int)Daño, Causante);
+                    Destroy(gameObject);
+                }
+            }
+            if (collision.tag == "Enemigo")
+            {
+                Stats statstarjet = collision.GetComponent<Stats>();
+                if (statstarjet.PoderRecibirDaño(Causante))
+                {
+                    statstarjet.RecibirDaño((int)Daño, Causante);
+                    Destroy(gameObject);
+                }
+            }
         }
 
     }

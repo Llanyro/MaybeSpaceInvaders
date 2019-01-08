@@ -59,7 +59,7 @@ namespace Sistema
         }
 
         //Disparar
-        private void DispararProyectilBase(Stats causante, float dañoproyectil, Transform posicionDelCausante, Vector2[] direcciones )
+        private void DispararProyectilBase(Stats causante, Transform posicionDelCausante, Vector2[] direcciones )
         {
             foreach(Vector2 direccion in direcciones)
             {
@@ -67,28 +67,38 @@ namespace Sistema
                 float varDistancia = ((3 * SistemaDeControlGeneral.TamañoMapa)  / 55);
 
                 //Inicializa el proyectil
-                GameObject proyectil;
-                proyectil = Object.Instantiate(SistemaDeControlGeneral.Proyectil1);
-                proyectil.transform.localScale = new Vector3(SistemaDeControlGeneral.EscalaX / 10, SistemaDeControlGeneral.EscalaY / 10, 0);
-                proyectil.GetComponent<Proyectil>().Causante = causante;
-                proyectil.GetComponent<Proyectil>().Mecanicas = this;
-                proyectil.GetComponent<Proyectil>().Velocidad = SistemaDeControlGeneral.VelocidadMovimientoProyectil;
-                proyectil.GetComponent<Proyectil>().Direccion = direccion;
+                GameObject proyectilObj = Object.Instantiate(SistemaDeControlGeneral.Proyectil1);
 
-                //Posiciona el proyectil segun la direccion del movimiento
+                //Posicion, rotacion y escala
+                #region
                 Vector3 postemp = posicionDelCausante.position;
                 postemp.x += (varDistancia * direccion.x);
                 postemp.y += (varDistancia * direccion.y);
+                proyectilObj.transform.position = postemp;
+                proyectilObj.transform.rotation = Quaternion.Euler(0, 0, 0);
+                proyectilObj.transform.localScale = new Vector3(SistemaDeControlGeneral.EscalaX / 10, SistemaDeControlGeneral.EscalaY / 10, 0);
+                #endregion
 
-                proyectil.transform.position = postemp;
-                proyectil.transform.rotation = Quaternion.Euler(0, 0, 0);
+                //Iniciar script
+                #region
+                Proyectil proyectil = proyectilObj.AddComponent<Proyectil>();
+                proyectil.Causante = causante;
+                proyectil.Mecanicas = this;
+                proyectil.Velocidad = SistemaDeControlGeneral.VelocidadMovimientoProyectil;
+                proyectil.Direccion = direccion;
+                proyectil.Daño = causante.Struct_Stats.Arma.Daño;
+                #endregion
 
                 //Activa el proyectil
-                proyectil.SetActive(true);
+                proyectilObj.SetActive(true);
             }
         }
 
-        public void UsarArma(Stats causante)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="invertir"> Causa que las direcciones se inviertan </param>
+        public void UsarArma(Stats causante, bool invertir)
         {
             if (causante.Struct_Stats.Arma.UltimoAtaque + causante.Struct_Stats.Arma.VelocidadDeAtaque > Time.fixedTime) return;
             if (causante.Struct_Stats.Arma.EnEnfriamiento)
@@ -103,33 +113,48 @@ namespace Sistema
             switch (arma.TipoDeArma)
             {
                 case TipoDeArma.Base:
-                    direcciones = new Vector2[1];
-                    direcciones[0] = new Vector2(0,1);
-                    DispararProyectilBase(causante, arma.Daño, causante.transform, direcciones);
-                    arma.Recalentamiento++;
+                    {
+                        direcciones = new Vector2[1];
+                        if(invertir) direcciones[0] = new Vector2(0, -1);
+                        else direcciones[0] = new Vector2(0, 1);
+                        DispararProyectilBase(causante, causante.transform, direcciones);
+                        arma.Recalentamiento++;
+                    }
                     break;
                 case TipoDeArma.Tridireccional:
-                    direcciones = new Vector2[3];
-                    direcciones[0] = new Vector2(0, 1);
-                    direcciones[1] = new Vector2(1, 1);
-                    direcciones[2] = new Vector2(-1, 1);
-                    DispararProyectilBase(causante, arma.Daño, causante.transform, direcciones);
-                    arma.Recalentamiento += 3;
+                    {
+                        direcciones = new Vector2[3];
+                        if(invertir)
+                        {
+                            direcciones[0] = new Vector2(0, -1);
+                            direcciones[1] = new Vector2(-1, -1);
+                            direcciones[2] = new Vector2(1, -1);
+                        }
+                        else
+                        {
+                            direcciones[0] = new Vector2(0, 1);
+                            direcciones[1] = new Vector2(1, 1);
+                            direcciones[2] = new Vector2(-1, 1);
+                        }
+                        DispararProyectilBase(causante, causante.transform, direcciones);
+                        arma.Recalentamiento += 3;
+                    }
                     break;
+                    //Este arma no es necesario invertila, ya que dispara en todas las direcciones
                 case TipoDeArma.OctaDireccional:
-                    direcciones = new Vector2[8];
-                    direcciones[0] = new Vector2(0, 1);
-                    direcciones[1] = new Vector2(1, 1);
-                    direcciones[2] = new Vector2(-1, 1);
-
-                    direcciones[3] = new Vector2(1, 0);
-                    direcciones[4] = new Vector2(-1, 0);
-
-                    direcciones[5] = new Vector2(1, -1);
-                    direcciones[6] = new Vector2(-1, -1);
-                    direcciones[7] = new Vector2(0, -1);
-                    DispararProyectilBase(causante, arma.Daño, causante.transform, direcciones);
-                    arma.Recalentamiento += 8;
+                    {
+                        direcciones = new Vector2[8];
+                        direcciones[0] = new Vector2(0, 1);
+                        direcciones[1] = new Vector2(1, 1);
+                        direcciones[2] = new Vector2(-1, 1);
+                        direcciones[3] = new Vector2(1, 0);
+                        direcciones[4] = new Vector2(-1, 0);
+                        direcciones[5] = new Vector2(1, -1);
+                        direcciones[6] = new Vector2(-1, -1);
+                        direcciones[7] = new Vector2(0, -1);
+                        DispararProyectilBase(causante, causante.transform, direcciones);
+                        arma.Recalentamiento += 8;
+                    }
                     break;
             }
 

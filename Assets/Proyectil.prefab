@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 212797017366180076}
   - component: {fileID: 58219778686390702}
   - component: {fileID: 50780944517925502}
-  - component: {fileID: 114352925068722240}
   m_Layer: 0
   m_Name: Proyectil
   m_TagString: Proyectil
@@ -119,15 +118,3 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &114352925068722240
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1206355819646038}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 583657ec22b7ba34c9825e889988faa0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

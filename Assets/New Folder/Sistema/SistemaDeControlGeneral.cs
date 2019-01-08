@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using Entidades.All;
+using System.Collections.Generic;
 
 namespace Sistema
 {
+    enum Entidad { Player1, Player2, Enemigo1 }
     class SistemaDeControlGeneral : MonoBehaviour
     {
         public Interfaz Interfaz { get; private set; }
@@ -33,6 +35,9 @@ namespace Sistema
         //Daño general de los proyectiles
         public float DañoProyectil = 40;
 
+        //Enemigos
+        public int MaxEnemigosTipo1 = 3;
+
         #endregion
 
         //Objetos Recogidos Externamente
@@ -57,67 +62,92 @@ namespace Sistema
         /// Camara que graba todo el mapa
         /// </summary>
         public GameObject MainCamera { get; private set; }
+        #endregion
 
+        //Entidades vivas
+        #region
+        //Variables
+        #region
+        //Players
         public GameObject Player1 { get; private set; }
         public GameObject Player2 { get; private set; }
 
+        //Enemigos
+        public List<GameObject> EnemigosTipo1 = new List<GameObject>();
+
         #endregion
 
-        //Control Players
+        //Funciones
         #region
         /// <summary>
         /// Añade un jugador a la partida si este no esta inicializado
+        /// Si esta instanciado sale directemante
         /// </summary>
-        public void AñadirJugador(int IDJugador, bool añadir)
+        public void AñadirEntidad(Entidad entidad, Vector2 vector2)
         {
-            if (IDJugador > 2 && IDJugador < 1) Debug.LogError("Se intenta inicializar el jugador con ID: " + IDJugador);
-
-            if(añadir)
+            switch (entidad)
             {
-                if (IDJugador == 1 && Player1 != null) EliminarJugador(IDJugador);
-                if (IDJugador == 2 && Player2 != null) EliminarJugador(IDJugador);
-
-                InicializarJugador(IDJugador);
-            }
-            else
-            {
-                EliminarJugador(IDJugador);
+                case Entidad.Enemigo1:
+                    if(EnemigosTipo1.Count < MaxEnemigosTipo1) EnemigosTipo1.Add(InicializarEntidad(Entidad.Enemigo1, Enemigo1, vector2));
+                    break;
+                case Entidad.Player1:
+                    if (Player1 == null)
+                        Player1 = InicializarEntidad(entidad, Player, vector2);
+                    break;
+                case Entidad.Player2:
+                    if (Player2 != null)
+                        Player2 = InicializarEntidad(entidad, Player, vector2);
+                    break;
             }
         }
 
-        private void InicializarJugador(int IDJugador)
+        /// <summary>
+        /// Inicializa una entidad
+        /// </summary>
+        private GameObject InicializarEntidad(Entidad entidad, GameObject entidadObj, Vector2 posicion)
         {
-            GameObject nuevoJugador = Instantiate(Player);
-            nuevoJugador.transform.localScale = new Vector3(EscalaX, EscalaY, 0);
-            nuevoJugador.transform.position = new Vector3(0, -((TamañoMapa * 7) / 10), 0);
+            //Instanciamos la entidad
+            GameObject nuevaEntidad = Instantiate(entidadObj);
+            nuevaEntidad.transform.localScale = new Vector3(EscalaX, EscalaY, 0);
+            nuevaEntidad.transform.position = new Vector3(posicion.x, posicion.y, 0);
 
+            //Añade el script stats a la entidad
+            Stats stats = nuevaEntidad.AddComponent<Stats>();
+            stats.IniciarPlayer(entidad, this, Interfaz);
 
-            nuevoJugador.AddComponent<Stats>();
-            Stats stats = nuevoJugador.GetComponent<Stats>();
-            stats.IniciarPlayer(IDJugador, this, Interfaz);
-
-            Interfaz.IniciarGUIPlayer(IDJugador, true);
-            if (IDJugador == 1) Player1 = nuevoJugador;
-            else if (IDJugador == 2) Player2 = nuevoJugador;
+            return nuevaEntidad;
         }
 
-        public void EliminarJugador(int IDJugador)
+        /// <summary>
+        /// Elimina una entidad de la partida
+        /// </summary>
+        public void EliminarEntidad(Stats stats)
         {
-            switch (IDJugador)
+            Interfaz.IniciarGUIPlayer(stats.Struct_Stats.Entidad, false);
+
+            switch (stats.Struct_Stats.Entidad)
             {
-                case 1:
-                    Destroy(Player1);
+                case Entidad.Enemigo1:
+                    EnemigosTipo1.Remove(stats.gameObject);
+                    break;
+                case Entidad.Player1:
                     Player1 = null;
                     break;
-                case 2:
-                    Destroy(Player2);
+                case Entidad.Player2:
                     Player2 = null;
                     break;
             }
-            Interfaz.IniciarGUIPlayer(IDJugador, false);
+            Destroy(stats.gameObject);
         }
+
         #endregion
 
+        #endregion
+
+        //Entidades objetos (inertes)
+        #region
+        #endregion
+        
         //Inicializadores
         #region
         private void ActualizacionInicialJuego()
@@ -168,15 +198,20 @@ namespace Sistema
             //Test
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                AñadirJugador(1, true);
+                AñadirEntidad(Entidad.Player1, new Vector2(0, -((TamañoMapa * 7) / 10)));
             }
 
             //Test 2
             if (Input.GetKeyDown(KeyCode.Alpha2))
             {
-                AñadirJugador(2, true);
+                AñadirEntidad(Entidad.Player2, new Vector2(0, -((TamañoMapa * 7) / 10)));
             }
 
+            //Test 3
+            if(Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                AñadirEntidad(Entidad.Enemigo1, new Vector2(0, ((TamañoMapa * 7) / 10)));
+            }
         }
     }
 }

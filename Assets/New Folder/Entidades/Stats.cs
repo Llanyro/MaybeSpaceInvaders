@@ -3,6 +3,7 @@ using Sistema;
 using Objetos;
 using UnityEngine;
 using Entidades.Player;
+using Entidades.Enemigos;
 
 namespace Entidades.All
 {
@@ -13,7 +14,7 @@ namespace Entidades.All
         /// Si el ID es mayor a 0 quiere decir que es un player
         /// Si el id es menor a 0 es un enemigo
         /// </summary>
-        public int ID { get; set; }
+        public Entidad Entidad { get; set; }
 
         public int Salud { get; set; }
         public int MaxSalud { get; set; }
@@ -32,18 +33,42 @@ namespace Entidades.All
         #region
         public Struct_Stats Struct_Stats;
         public ControlPlayer ControlPlayer { get; private set; }
+        public ControlEnemigo ControlEnemigo { get; private set; }
         public SistemaDeControlGeneral SistemaDeControlGeneral { get; private set; }
         public Interfaz Interfaz { get; private set; }
         #endregion
 
         //
         #region
-        private void PoderRecibirDaño()
+        public bool PoderRecibirDaño(Stats causante)
         {
+            //Si no es una entidad viviente
+            if (causante == null) return true;
+            //Si es uno mismo
+            if (causante == this) return false;
 
+            switch(Struct_Stats.Entidad)
+            {
+                case Entidad.Player1:
+                case Entidad.Player2:
+                    //Si es un player
+                    if (causante.Struct_Stats.Entidad == Entidad.Player1) return false;
+                    else if (causante.Struct_Stats.Entidad == Entidad.Player2) return false;
+                    //Si es un enemigo
+                    else return true;
+
+                case Entidad.Enemigo1:
+                    //Si es un player
+                    if (causante.Struct_Stats.Entidad == Entidad.Player1) return true;
+                    else if (causante.Struct_Stats.Entidad == Entidad.Player2) return true;
+                    //Si es un enemigo
+                    else return false;
+            }
+
+            return false;
         }
 
-        private void PoderRecibirCuracion()
+        private void PoderRecibirCuracion(Stats causante)
         {
 
         }
@@ -116,6 +141,7 @@ namespace Entidades.All
             {
                 Struct_Stats.Salud = Struct_Stats.MaxSalud;
             }
+
             Interfaz.GUISalud(this);
         }
         /// <summary>
@@ -132,6 +158,7 @@ namespace Entidades.All
                 Struct_Stats.Exp = 0;
                 SubirNivel();
             }
+
             Interfaz.GUIExperiencia(this);
         }
 
@@ -148,23 +175,22 @@ namespace Entidades.All
             Interfaz.GUINivel(this);
         }
 
+        /// <summary>
+        /// Elimina la entidad y le da experiencia a causante de la muerte en caso de ser un enemigo y el causante no ser null
+        /// </summary>
         private void Morir(Stats causante)
         {
-            if (Struct_Stats.ID < 0)    //Si la entidad es un enemigo
+            if(causante != null)
             {
-                if (causante != null)   //Si un player ha matado la entidad
+                switch (Struct_Stats.Entidad)
                 {
-                    causante.RecibirExperiencia(1);
-                    /*
-                     Acciones que deba de realizarse antes de eliminar el objeto
-                     */
-                    Destroy(gameObject);
+                    case Entidad.Enemigo1:
+                        causante.RecibirExperiencia(10);
+                        break;
                 }
             }
-            else                        //Si la entidad es un player
-            {
-                SistemaDeControlGeneral.AñadirJugador(Struct_Stats.ID, false);
-            }
+
+            SistemaDeControlGeneral.EliminarEntidad(this);
         }
 
         #endregion
@@ -201,30 +227,50 @@ namespace Entidades.All
             Struct_Stats.Salud = 100;
         }
 
-        public void IniciarPlayer(int ID, SistemaDeControlGeneral sistemaDeControlGeneral, Interfaz interfaz)
+        public void IniciarPlayer(Entidad Entidad, SistemaDeControlGeneral sistemaDeControlGeneral, Interfaz interfaz)
         {
             SistemaDeControlGeneral = sistemaDeControlGeneral;
             Interfaz = interfaz;
 
-            //Iniciamos los controles
-            ControlPlayer =  gameObject.AddComponent<ControlPlayer>();
-            ControlPlayer.Stats = this;
-            ControlPlayer.Mecanicas = new Mecanicas()
-            {
-                SistemaDeControlGeneral = sistemaDeControlGeneral,
-            };
-
             //Iniciamos las stats
-            Struct_Stats.ID = ID;
+            Struct_Stats.Entidad = Entidad;
             Struct_Stats.VelocidadMovimiento = sistemaDeControlGeneral.VelocidadMovimientoPlayer;
-            InicialNivel();
 
-            //Iniciamos el arma
-            AñadirArmaInicial();
+            //Si es un player
+            switch(Entidad)
+            {
+                case Entidad.Player1:
+                case Entidad.Player2:
+                    {
+                        //Iniciamos los controles
+                        ControlPlayer = gameObject.AddComponent<ControlPlayer>();
+                        ControlPlayer.Stats = this;
+                        ControlPlayer.Mecanicas = new Mecanicas()
+                        {
+                            SistemaDeControlGeneral = sistemaDeControlGeneral,
+                        };
 
-            Interfaz.GUISalud(this);
-            Interfaz.GUIExperiencia(this);
-            Interfaz.GUINivel(this);
+                        InicialNivel();
+                        AñadirArmaInicial();
+                    }
+                    break;
+                case Entidad.Enemigo1:
+                    {
+                        //Iniciamos los controles
+                        ControlEnemigo = gameObject.AddComponent<ControlEnemigo>();
+                        ControlEnemigo.Stats = this;
+                        ControlEnemigo.Mecanicas = new Mecanicas()
+                        {
+                            SistemaDeControlGeneral = sistemaDeControlGeneral,
+                        };
+
+                        InicialNivel();
+                        AñadirArmaInicial();
+                    }
+                    break;
+            }
+           //Actualiza la interfaz de la entidad
+            Interfaz.ActualizarGUI(this);
         }
         #endregion
 
