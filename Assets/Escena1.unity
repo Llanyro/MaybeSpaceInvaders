@@ -240,7 +240,7 @@ MonoBehaviour:
   EscalaYGui: 1
   VelocidadDelJuego: 1
   VelocidadMovimientoPlayer: 50
-  VelocidadMovimientoProyectil: 1
+  VelocidadMovimientoProyectil: 10
   VelocidadMovimientoProyectilEnemigo: 1
   "Da\xF1oProyectil": 40
   Player: {fileID: 1281332805985352, guid: e8dc078d3971bf6438cfeef527dd38f6, type: 2}
@@ -356,7 +356,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!50 &1112841394
 Rigidbody2D:
   serializedVersion: 4

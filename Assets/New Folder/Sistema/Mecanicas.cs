@@ -2,8 +2,6 @@
 using UnityEngine;
 using Objetos;
 
-enum Direccion { Ninguna, Arriba, Abajo, Derecha, Izquierda, ArribaDerecha, AbajoDerecha, ArribaIzquierda, AbajoIzquierda }
-
 namespace Sistema
 {
     class Mecanicas
@@ -18,9 +16,9 @@ namespace Sistema
         }
 
         //Disparar
-        private void DispararProyectilBase(Movimiento causante, float dañoproyectil, Transform posicionDelCausante, Direccion[] direcciones )
+        private void DispararProyectilBase(Movimiento causante, float dañoproyectil, Transform posicionDelCausante, Vector2[] direcciones )
         {
-            foreach(Direccion direccion in direcciones)
+            foreach(Vector2 direccion in direcciones)
             {
                 //tamaño mapa 55 = 3 distancia
                 float varDistancia = ((3 * SistemaDeControlGeneral.TamañoMapa)  / 55);
@@ -35,45 +33,12 @@ namespace Sistema
                 proyectil.GetComponent<Proyectil>().Direccion = direccion;
 
                 //Posiciona el proyectil segun la direccion del movimiento
-                switch (direccion)
-                {
-                    case 0:
-                        proyectil.transform.position = new Vector3(posicionDelCausante.position.x, posicionDelCausante.position.y, 0);
-                        proyectil.transform.rotation = Quaternion.Euler(0, 0, 0);
-                        break;
-                    case (Direccion)1:
-                        proyectil.transform.position = new Vector3(posicionDelCausante.position.x, posicionDelCausante.position.y + varDistancia, 0);
-                        proyectil.transform.rotation = Quaternion.Euler(0, 0, 0);
-                        break;
-                    case (Direccion)2:
-                        proyectil.transform.position = new Vector3(posicionDelCausante.position.x, posicionDelCausante.position.y - varDistancia, 0);
-                        proyectil.transform.rotation = Quaternion.Euler(0, 0, 0);
-                        break;
-                    case (Direccion)3:
-                        proyectil.transform.position = new Vector3(posicionDelCausante.position.x + varDistancia, posicionDelCausante.position.y, 0);
-                        proyectil.transform.rotation = Quaternion.Euler(0, 0, 0);
-                        break;
-                    case (Direccion)4:
-                        proyectil.transform.position = new Vector3(posicionDelCausante.position.x - varDistancia, posicionDelCausante.position.y, 0);
-                        proyectil.transform.rotation = Quaternion.Euler(0, 0, 0);
-                        break;
-                    case (Direccion)5:
-                        proyectil.transform.position = new Vector3(posicionDelCausante.position.x + varDistancia, posicionDelCausante.position.y + varDistancia, 0);
-                        proyectil.transform.rotation = Quaternion.Euler(0, 0, 0);
-                        break;
-                    case (Direccion)6:
-                        proyectil.transform.position = new Vector3(posicionDelCausante.position.x + varDistancia, posicionDelCausante.position.y - varDistancia, 0);
-                        proyectil.transform.rotation = Quaternion.Euler(0, 0, 0);
-                        break;
-                    case (Direccion)7:
-                        proyectil.transform.position = new Vector3(posicionDelCausante.position.x - varDistancia, posicionDelCausante.position.y + varDistancia, 0);
-                        proyectil.transform.rotation = Quaternion.Euler(0, 0, 0);
-                        break;
-                    case (Direccion)8:
-                        proyectil.transform.position = new Vector3(posicionDelCausante.position.x - varDistancia, posicionDelCausante.position.y - varDistancia, 0);
-                        proyectil.transform.rotation = Quaternion.Euler(0, 0, 0);
-                        break;
-                }
+                Vector3 postemp = posicionDelCausante.position;
+                postemp.x += (varDistancia * direccion.x);
+                postemp.y += (varDistancia * direccion.y);
+
+                proyectil.transform.position = postemp;
+                proyectil.transform.rotation = Quaternion.Euler(0, 0, 0);
 
                 //Activa el proyectil
                 proyectil.SetActive(true);
@@ -82,32 +47,32 @@ namespace Sistema
 
         public void UsarArma(Arma arma, Movimiento causante)
         {
-            Direccion[] direcciones;
+            Vector2[] direcciones;
             switch (arma.TipoDeArma)
             {
                 case 0:
-                    direcciones = new Direccion[1];
-                    direcciones[0] = (Direccion)1;
+                    direcciones = new Vector2[1];
+                    direcciones[0] = new Vector2(1,0);
                     DispararProyectilBase(causante, arma.Daño, causante.transform, direcciones);
                     break;
                 case (TipoDeArma)1:
-                    direcciones = new Direccion[3];
-                    direcciones[0] = (Direccion)1;
-                    direcciones[1] = (Direccion)5;
-                    direcciones[2] = (Direccion)8;
-                    DispararProyectilBase(causante, arma.Daño, causante.transform, direcciones);
+                    /*direcciones = new Vector2[3];
+                    direcciones[0] = (Vector2)1;
+                    direcciones[1] = (Vector2)5;
+                    direcciones[2] = (Vector2)8;*/
+                    //DispararProyectilBase(causante, arma.Daño, causante.transform, direcciones);
                     break;
                 case (TipoDeArma)2:
-                    direcciones = new Direccion[8];
-                    direcciones[0] = (Direccion)1;
-                    direcciones[1] = (Direccion)2;
-                    direcciones[2] = (Direccion)3;
-                    direcciones[3] = (Direccion)4;
-                    direcciones[4] = (Direccion)5;
-                    direcciones[5] = (Direccion)6;
-                    direcciones[6] = (Direccion)7;
-                    direcciones[7] = (Direccion)8;
-                    DispararProyectilBase(causante, arma.Daño, causante.transform, direcciones);
+                    /*direcciones = new Vector2[8];
+                    direcciones[0] = (Vector2)1;
+                    direcciones[1] = (Vector2)2;
+                    direcciones[2] = (Vector2)3;
+                    direcciones[3] = (Vector2)4;
+                    direcciones[4] = (Vector2)5;
+                    direcciones[5] = (Vector2)6;
+                    direcciones[6] = (Vector2)7;
+                    direcciones[7] = (Vector2)8;*/
+                    //DispararProyectilBase(causante, arma.Daño, causante.transform, direcciones);
                     break;
             }
         }

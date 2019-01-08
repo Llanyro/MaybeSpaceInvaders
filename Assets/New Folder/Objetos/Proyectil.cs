@@ -13,7 +13,7 @@ namespace Objetos
         public Movimiento Causante { get; set; }
         public Mecanicas Mecanicas { get; set; }
         public float Velocidad { get; set; }
-        public Direccion Direccion { get; set; }
+        public Vector2 Direccion { get; set; }
         public float Daño { get; set; }
 
         private void Update()
