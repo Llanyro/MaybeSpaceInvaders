@@ -87,7 +87,7 @@ namespace Sistema
         {
             GameObject nuevoJugador = Instantiate(Player);
             nuevoJugador.transform.localScale = new Vector3(EscalaX, EscalaY, 0);
-            nuevoJugador.transform.position = new Vector3(0, ((TamañoMapa * 7) / 10), 0);
+            nuevoJugador.transform.position = new Vector3(0, -((TamañoMapa * 7) / 10), 0);
 
             Movimiento movimientoplayer = nuevoJugador.GetComponent<Movimiento>();
             movimientoplayer.ID = IDJugador;
@@ -99,13 +99,12 @@ namespace Sistema
             };
             movimientoplayer.Arma = new Objetos.Arma()
             {
-                TipoDeArma = 0,
+                TipoDeArma = TipoDeArma.Base,
                 Daño = DañoProyectil,
                 Recalentamiento = 0,
                 MaxRecalentamiento = 100,
-                VelocidadDeAtaque = 0.1f
+                VelocidadDeAtaque = 0.3f
             };
-
 
             if (IDJugador == 0) Player1 = nuevoJugador;
             else Player2 = nuevoJugador;
@@ -158,7 +157,6 @@ namespace Sistema
                 else if (transform.GetChild(i).tag == "MainCamera")
                 {
                     MainCamera = transform.GetChild(i).gameObject;
-
                 }
             }
         }

@@ -8,11 +8,54 @@ namespace Sistema
     {
         public SistemaDeControlGeneral SistemaDeControlGeneral { get; set; }
 
+        /// <summary>
+        /// Mueve un objeto de manera vertical segun el valor que decidammos
+        /// </summary>
+        private void MovimientoVertical(Transform transformObjeto, float value)
+        {
+            if (value > 0) if ((transformObjeto.position.y + (Time.deltaTime * value)) >= SistemaDeControlGeneral.TamañoMapa) return;
+            if (value < 0) if ((transformObjeto.position.y + (Time.deltaTime * value)) <= -SistemaDeControlGeneral.TamañoMapa) return;
+
+            transformObjeto.Translate(0, Time.deltaTime * value, 0);
+        }
+        /// <summary>
+        /// Mueve un objeto de manera horizontal segun el valor que decidammos
+        /// </summary>
+        private void MovimientoHorizontal(Transform transformObjeto, float value)
+        {
+            if (value > 0) if ((transformObjeto.position.x + (Time.deltaTime * value)) >= SistemaDeControlGeneral.TamañoMapa) return;
+            if (value < 0) if ((transformObjeto.position.x + (Time.deltaTime * value)) <= -SistemaDeControlGeneral.TamañoMapa) return;
+
+            transformObjeto.Translate(Time.deltaTime * value, 0, 0);
+        }
+
         //Movimiento de los objetos, players y Enemigos
         //public void Mover(Transform transform, Direccion direccion, float VelocidadMovimiento);
+        //Se adapta a los fps de la maquina
         public void Mover(Transform transform, Vector2 direccion, float VelocidadMovimiento)
         {
-            transform.Translate(direccion*VelocidadMovimiento);
+            //Si esta al borde del mapa, no se permite continuar
+            #region
+            if (direccion.x > 0)
+            {
+                if ((transform.position.x + (Time.deltaTime * 1 * VelocidadMovimiento)) >= SistemaDeControlGeneral.TamañoMapa) direccion.x = 0;
+            }
+            else if (direccion.x < 0)
+            {
+                if ((transform.position.x + (Time.deltaTime * -1 * VelocidadMovimiento)) <= -SistemaDeControlGeneral.TamañoMapa) direccion.x = 0;
+            }
+
+            if (direccion.y > 0)
+            {
+                if ((transform.position.y + (Time.deltaTime * 1 * VelocidadMovimiento)) >= SistemaDeControlGeneral.TamañoMapa) direccion.y = 0;
+            }
+            else if (direccion.y < 0)
+            {
+                if ((transform.position.y + (Time.deltaTime * -1 * VelocidadMovimiento)) <= -SistemaDeControlGeneral.TamañoMapa) direccion.y = 0;
+            }
+            #endregion
+
+            transform.Translate(direccion * VelocidadMovimiento * Time.deltaTime);
         }
 
         //Disparar
@@ -47,34 +90,54 @@ namespace Sistema
 
         public void UsarArma(Arma arma, Movimiento causante)
         {
+            if (arma.UltimoAtaque + arma.VelocidadDeAtaque > Time.fixedTime) return;
+            if (arma.EnEnfriamiento) ReposarArma(arma);
+
             Vector2[] direcciones;
             switch (arma.TipoDeArma)
             {
-                case 0:
+                case TipoDeArma.Base:
                     direcciones = new Vector2[1];
-                    direcciones[0] = new Vector2(1,0);
+                    direcciones[0] = new Vector2(0,1);
                     DispararProyectilBase(causante, arma.Daño, causante.transform, direcciones);
+                    arma.Recalentamiento++;
                     break;
-                case (TipoDeArma)1:
-                    /*direcciones = new Vector2[3];
-                    direcciones[0] = (Vector2)1;
-                    direcciones[1] = (Vector2)5;
-                    direcciones[2] = (Vector2)8;*/
-                    //DispararProyectilBase(causante, arma.Daño, causante.transform, direcciones);
+                case TipoDeArma.Tridireccional:
+                    direcciones = new Vector2[3];
+                    direcciones[0] = new Vector2(0, 1);
+                    direcciones[1] = new Vector2(1, 1);
+                    direcciones[2] = new Vector2(-1, 1);
+                    DispararProyectilBase(causante, arma.Daño, causante.transform, direcciones);
+                    arma.Recalentamiento += 3;
                     break;
-                case (TipoDeArma)2:
-                    /*direcciones = new Vector2[8];
-                    direcciones[0] = (Vector2)1;
-                    direcciones[1] = (Vector2)2;
-                    direcciones[2] = (Vector2)3;
-                    direcciones[3] = (Vector2)4;
-                    direcciones[4] = (Vector2)5;
-                    direcciones[5] = (Vector2)6;
-                    direcciones[6] = (Vector2)7;
-                    direcciones[7] = (Vector2)8;*/
-                    //DispararProyectilBase(causante, arma.Daño, causante.transform, direcciones);
+                case TipoDeArma.OctaDireccional:
+                    direcciones = new Vector2[8];
+                    direcciones[0] = new Vector2(0, 1);
+                    direcciones[1] = new Vector2(1, 1);
+                    direcciones[2] = new Vector2(-1, 1);
+
+                    direcciones[3] = new Vector2(1, 0);
+                    direcciones[4] = new Vector2(-1, 0);
+
+                    direcciones[5] = new Vector2(1, -1);
+                    direcciones[6] = new Vector2(-1, -1);
+                    direcciones[7] = new Vector2(0, -1);
+                    DispararProyectilBase(causante, arma.Daño, causante.transform, direcciones);
+                    arma.Recalentamiento += 8;
                     break;
             }
+
+            arma.UltimoAtaque = Time.fixedTime;
+            if (arma.Recalentamiento >= arma.MaxRecalentamiento) arma.EnEnfriamiento = true;
+        }
+
+        public void ReposarArma(Arma arma)
+        {
+            if (arma.UltimaVezReposada + 0.1f > Time.fixedTime) return;
+            if (arma.Recalentamiento <= 0) return;
+
+            arma.UltimaVezReposada = Time.fixedTime;
+            arma.Recalentamiento--;
         }
     }
 

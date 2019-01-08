@@ -58,7 +58,11 @@ namespace Player
 
         private void Disparar()
         {
-            if (ID == 0) if (Input.GetKey(KeyCode.Space)) Mecanicas.UsarArma(Arma, this);
+            if (ID == 0)
+            {
+                if (Input.GetKey(KeyCode.Space)) Mecanicas.UsarArma(Arma, this);
+                else Mecanicas.ReposarArma(Arma);
+            }
             else if (Input.GetKey(KeyCode.RightShift)) Mecanicas.UsarArma(Arma, this);
         }
 
