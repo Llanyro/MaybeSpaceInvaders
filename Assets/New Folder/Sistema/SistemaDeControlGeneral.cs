@@ -1,11 +1,12 @@
-﻿using Objetos;
-using UnityEngine;
+﻿using UnityEngine;
 using Entidades.All;
 
 namespace Sistema
 {
     class SistemaDeControlGeneral : MonoBehaviour
     {
+        public Interfaz Interfaz { get; private set; }
+
         //Variables que cambian el juego desde fuera del script
         #region
         //Indica el tamaño del mapa X = Y (Es un cuadrado)
@@ -93,9 +94,9 @@ namespace Sistema
 
             nuevoJugador.AddComponent<Stats>();
             Stats stats = nuevoJugador.GetComponent<Stats>();
-            stats.IniciarPlayer(IDJugador, this);
+            stats.IniciarPlayer(IDJugador, this, Interfaz);
 
-
+            Interfaz.IniciarGUIPlayer(IDJugador, true);
             if (IDJugador == 1) Player1 = nuevoJugador;
             else if (IDJugador == 2) Player2 = nuevoJugador;
         }
@@ -109,10 +110,11 @@ namespace Sistema
                     Player1 = null;
                     break;
                 case 2:
-                    Destroy(Player1);
+                    Destroy(Player2);
                     Player2 = null;
                     break;
             }
+            Interfaz.IniciarGUIPlayer(IDJugador, false);
         }
         #endregion
 
@@ -153,6 +155,8 @@ namespace Sistema
 
         private void Awake()
         {
+            Interfaz = GetComponent<Interfaz>();
+
             BuscarReferencias();
             ActualizacionInicialJuego();
         }

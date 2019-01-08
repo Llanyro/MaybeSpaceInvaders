@@ -146,6 +146,4 @@ namespace Sistema
             causante.Struct_Stats.Arma.Recalentamiento--;
         }
     }
-
-
 }

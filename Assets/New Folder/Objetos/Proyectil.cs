@@ -31,8 +31,6 @@ namespace Objetos
 
     }
 
-
-
     [Serializable]
     class Arma
     {

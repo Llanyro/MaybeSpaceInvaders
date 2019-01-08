@@ -33,7 +33,7 @@ namespace Entidades.All
         public Struct_Stats Struct_Stats;
         public ControlPlayer ControlPlayer { get; private set; }
         public SistemaDeControlGeneral SistemaDeControlGeneral { get; private set; }
-
+        public Interfaz Interfaz { get; private set; }
         #endregion
 
         //
@@ -67,6 +67,7 @@ namespace Entidades.All
                 Struct_Stats.Exp += Struct_Stats.MaxExp;
                 VariacionExperiencia();
                 RecibirExperiencia(sobrante);
+                VariacionExperiencia();
             }
             else
             {
@@ -115,6 +116,7 @@ namespace Entidades.All
             {
                 Struct_Stats.Salud = Struct_Stats.MaxSalud;
             }
+            Interfaz.GUISalud(this);
         }
         /// <summary>
         /// Realiza varias acciones segun el stat en concreto
@@ -130,6 +132,7 @@ namespace Entidades.All
                 Struct_Stats.Exp = 0;
                 SubirNivel();
             }
+            Interfaz.GUIExperiencia(this);
         }
 
         #endregion
@@ -141,6 +144,8 @@ namespace Entidades.All
             Struct_Stats.Nivel++;
             Struct_Stats.MaxSalud += 5;
             Struct_Stats.MaxExp += 10;
+            Interfaz.GUISalud(this);
+            Interfaz.GUINivel(this);
         }
 
         private void Morir(Stats causante)
@@ -196,9 +201,10 @@ namespace Entidades.All
             Struct_Stats.Salud = 100;
         }
 
-        public void IniciarPlayer(int ID, SistemaDeControlGeneral sistemaDeControlGeneral)
+        public void IniciarPlayer(int ID, SistemaDeControlGeneral sistemaDeControlGeneral, Interfaz interfaz)
         {
             SistemaDeControlGeneral = sistemaDeControlGeneral;
+            Interfaz = interfaz;
 
             //Iniciamos los controles
             ControlPlayer =  gameObject.AddComponent<ControlPlayer>();
@@ -215,9 +221,12 @@ namespace Entidades.All
 
             //Iniciamos el arma
             AñadirArmaInicial();
+
+            Interfaz.GUISalud(this);
+            Interfaz.GUIExperiencia(this);
+            Interfaz.GUINivel(this);
         }
         #endregion
-
 
     }
 }
