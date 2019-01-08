@@ -1,27 +1,22 @@
 ﻿using Sistema;
-using Objetos;
 using UnityEngine;
+using Entidades.All;
 
-namespace Player
+namespace Entidades.Player
 {
-    class Movimiento : MonoBehaviour
+    class ControlPlayer : MonoBehaviour
     {
         //Referencias
         #region
-        public SistemaDeControlGeneral SistemaDeControlGeneral { get; set; }
         public Mecanicas Mecanicas { get; set; }
+        public Stats Stats { get; set; }
         #endregion
-
-        public byte ID { get; set; }
-        public Arma Arma;
-
-        public float VelocidadMovimiento { get; set; }
 
         //Movimiento del player 2D
         private void Moverse()
         {
             Vector2 direccion = new Vector2(0,0);
-            if (ID == 0)
+            if (Stats.Struct_Stats.ID == 1)
             {
                 if (Input.GetKey(KeyCode.A)) direccion.x  = -1;
                 if (Input.GetKey(KeyCode.D))
@@ -37,7 +32,7 @@ namespace Player
                     else direccion.y = 0;
                 }
             }
-            else
+            else if (Stats.Struct_Stats.ID == 2)
             {
                 if (Input.GetKey(KeyCode.LeftArrow)) direccion.x = -1;
                 if (Input.GetKey(KeyCode.RightArrow))
@@ -53,23 +48,31 @@ namespace Player
                     else direccion.y = 0;
                 }
             }
-            Mecanicas.Mover(transform, direccion, VelocidadMovimiento);
+            Mecanicas.Mover(transform, direccion, Stats.Struct_Stats.VelocidadMovimiento);
         }
 
         private void Disparar()
         {
-            if (ID == 0)
+            if (Stats.Struct_Stats.ID == 1)
             {
-                if (Input.GetKey(KeyCode.Space)) Mecanicas.UsarArma(Arma, this);
-                else Mecanicas.ReposarArma(Arma);
+                if (Input.GetKey(KeyCode.Space)) Mecanicas.UsarArma(Stats);
+                else Mecanicas.ReposarArma(Stats);
             }
-            else if (Input.GetKey(KeyCode.RightShift)) Mecanicas.UsarArma(Arma, this);
+            else if(Stats.Struct_Stats.ID == 2)
+            {
+                if (Input.GetKey(KeyCode.RightShift)) Mecanicas.UsarArma(Stats);
+                else Mecanicas.ReposarArma(Stats);
+            }
         }
 
         private void Update()
         {
             Moverse();
             Disparar();
+
+            if (Input.GetKeyDown(KeyCode.P)) Stats.RecibirDaño(10, null);
+            if (Input.GetKeyDown(KeyCode.O)) Stats.RecibirExperiencia(9);
+            if (Input.GetKeyDown(KeyCode.I)) Stats.RecibirCuracion(10);
         }
     }
 }

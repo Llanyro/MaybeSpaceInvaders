@@ -1,7 +1,7 @@
 ﻿using System;
-using Player;
 using Sistema;
 using UnityEngine;
+using Entidades.All;
 
 /// <summary>
 /// Este comentario tenia un poco de retraso
@@ -13,7 +13,7 @@ namespace Objetos
 {
     class Proyectil : MonoBehaviour
     {
-        public Movimiento Causante { get; set; }
+        public Stats Causante { get; set; }
         public Mecanicas Mecanicas { get; set; }
         public float Velocidad { get; set; }
         public Vector2 Direccion { get; set; }

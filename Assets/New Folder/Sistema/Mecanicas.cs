@@ -1,4 +1,4 @@
-﻿using Player;
+﻿using Entidades.All;
 using UnityEngine;
 using Objetos;
 
@@ -59,7 +59,7 @@ namespace Sistema
         }
 
         //Disparar
-        private void DispararProyectilBase(Movimiento causante, float dañoproyectil, Transform posicionDelCausante, Vector2[] direcciones )
+        private void DispararProyectilBase(Stats causante, float dañoproyectil, Transform posicionDelCausante, Vector2[] direcciones )
         {
             foreach(Vector2 direccion in direcciones)
             {
@@ -88,10 +88,16 @@ namespace Sistema
             }
         }
 
-        public void UsarArma(Arma arma, Movimiento causante)
+        public void UsarArma(Stats causante)
         {
-            if (arma.UltimoAtaque + arma.VelocidadDeAtaque > Time.fixedTime) return;
-            if (arma.EnEnfriamiento) ReposarArma(arma);
+            if (causante.Struct_Stats.Arma.UltimoAtaque + causante.Struct_Stats.Arma.VelocidadDeAtaque > Time.fixedTime) return;
+            if (causante.Struct_Stats.Arma.EnEnfriamiento)
+            {
+                ReposarArma(causante);
+                return;
+            }
+
+            Arma arma = causante.Struct_Stats.Arma;
 
             Vector2[] direcciones;
             switch (arma.TipoDeArma)
@@ -131,13 +137,13 @@ namespace Sistema
             if (arma.Recalentamiento >= arma.MaxRecalentamiento) arma.EnEnfriamiento = true;
         }
 
-        public void ReposarArma(Arma arma)
+        public void ReposarArma(Stats causante)
         {
-            if (arma.UltimaVezReposada + 0.1f > Time.fixedTime) return;
-            if (arma.Recalentamiento <= 0) return;
+            if (causante.Struct_Stats.Arma.UltimaVezReposada + 0.1f > Time.fixedTime) return;
+            if (causante.Struct_Stats.Arma.Recalentamiento <= 0) return;
 
-            arma.UltimaVezReposada = Time.fixedTime;
-            arma.Recalentamiento--;
+            causante.Struct_Stats.Arma.UltimaVezReposada = Time.fixedTime;
+            causante.Struct_Stats.Arma.Recalentamiento--;
         }
     }
 

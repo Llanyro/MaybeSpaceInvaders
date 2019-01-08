@@ -1,5 +1,6 @@
-﻿using Player;
+﻿using Objetos;
 using UnityEngine;
+using Entidades.All;
 
 namespace Sistema
 {
@@ -66,14 +67,14 @@ namespace Sistema
         /// <summary>
         /// Añade un jugador a la partida si este no esta inicializado
         /// </summary>
-        private void AñadirJugador(byte IDJugador, bool añadir)
+        public void AñadirJugador(int IDJugador, bool añadir)
         {
-            if (IDJugador > 1 && IDJugador < 0) Debug.LogError("Se intenta inicializar el jugador con ID: " + IDJugador);
+            if (IDJugador > 2 && IDJugador < 1) Debug.LogError("Se intenta inicializar el jugador con ID: " + IDJugador);
 
             if(añadir)
             {
-                if (IDJugador == 0 && Player1 != null) EliminarJugador(IDJugador);
-                if (IDJugador == 1 && Player2 != null) EliminarJugador(IDJugador);
+                if (IDJugador == 1 && Player1 != null) EliminarJugador(IDJugador);
+                if (IDJugador == 2 && Player2 != null) EliminarJugador(IDJugador);
 
                 InicializarJugador(IDJugador);
             }
@@ -83,44 +84,33 @@ namespace Sistema
             }
         }
 
-        private void InicializarJugador(byte IDJugador)
+        private void InicializarJugador(int IDJugador)
         {
             GameObject nuevoJugador = Instantiate(Player);
             nuevoJugador.transform.localScale = new Vector3(EscalaX, EscalaY, 0);
             nuevoJugador.transform.position = new Vector3(0, -((TamañoMapa * 7) / 10), 0);
 
-            Movimiento movimientoplayer = nuevoJugador.GetComponent<Movimiento>();
-            movimientoplayer.ID = IDJugador;
-            movimientoplayer.VelocidadMovimiento = VelocidadMovimientoPlayer;
-            movimientoplayer.SistemaDeControlGeneral = this;
-            movimientoplayer.Mecanicas = new Mecanicas()
-            {
-                SistemaDeControlGeneral = this,
-            };
-            movimientoplayer.Arma = new Objetos.Arma()
-            {
-                TipoDeArma = TipoDeArma.Base,
-                Daño = DañoProyectil,
-                Recalentamiento = 0,
-                MaxRecalentamiento = 100,
-                VelocidadDeAtaque = 0.3f
-            };
 
-            if (IDJugador == 0) Player1 = nuevoJugador;
-            else Player2 = nuevoJugador;
+            nuevoJugador.AddComponent<Stats>();
+            Stats stats = nuevoJugador.GetComponent<Stats>();
+            stats.IniciarPlayer(IDJugador, this);
+
+
+            if (IDJugador == 1) Player1 = nuevoJugador;
+            else if (IDJugador == 2) Player2 = nuevoJugador;
         }
 
-        public void EliminarJugador(byte IDJugador)
+        public void EliminarJugador(int IDJugador)
         {
             switch (IDJugador)
             {
-                case 0:
+                case 1:
                     Destroy(Player1);
                     Player1 = null;
                     break;
                 case 2:
                     Destroy(Player1);
-                    Player1 = null;
+                    Player2 = null;
                     break;
             }
         }
@@ -174,13 +164,13 @@ namespace Sistema
             //Test
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                AñadirJugador(0, true);
+                AñadirJugador(1, true);
             }
 
             //Test 2
             if (Input.GetKeyDown(KeyCode.Alpha2))
             {
-                AñadirJugador(1, true);
+                AñadirJugador(2, true);
             }
 
         }
