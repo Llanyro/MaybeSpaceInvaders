@@ -77,7 +77,7 @@ namespace Entidades.Player
             Disparar();
 
             if (Input.GetKeyDown(KeyCode.P)) Stats.RecibirDaño(10, null);
-            if (Input.GetKeyDown(KeyCode.O)) Stats.RecibirExperiencia(9);
+            if (Input.GetKeyDown(KeyCode.O)) Stats.RecibirExperiencia(10);
             if (Input.GetKeyDown(KeyCode.I)) Stats.RecibirCuracion(10);
             if (Input.GetKeyDown(KeyCode.U))
             {

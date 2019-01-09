@@ -247,13 +247,18 @@ namespace Sistema
                 AñadirEntidad(Entidad.Player1, new Vector2(0, -((TamañoMapa * 7) / 10)));
             }
 
-            //Test 2
+            //Test
             if (Input.GetKeyDown(KeyCode.Alpha2))
             {
                 AñadirEntidad(Entidad.Player2, new Vector2(0, -((TamañoMapa * 7) / 10)));
             }
-        }
 
+            //Test
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Application.Quit();
+            }
+        }
 
         //Niveles
         #region
@@ -349,8 +354,6 @@ namespace Sistema
                     break;
             }
         }
-
-
 
         private void InstanciarEnemigos(int num, Entidad entidad)
         {
