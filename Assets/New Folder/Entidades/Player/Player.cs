@@ -79,6 +79,22 @@ namespace Entidades.Player
             if (Input.GetKeyDown(KeyCode.P)) Stats.RecibirDaño(10, null);
             if (Input.GetKeyDown(KeyCode.O)) Stats.RecibirExperiencia(9);
             if (Input.GetKeyDown(KeyCode.I)) Stats.RecibirCuracion(10);
+            if (Input.GetKeyDown(KeyCode.U))
+            {
+                Stats.Struct_Stats.ArmaEspecial = new Objetos.ArmaEspecial()
+                {
+                    TipoDeArmaEspecial = TipoDeArmaEspecial.FullClear,
+                    CargasRestantes = 1
+                };
+            }
+            if (Input.GetKeyDown(KeyCode.Y))
+            {
+                Stats.Struct_Stats.ArmaEspecial = new Objetos.ArmaEspecial()
+                {
+                    TipoDeArmaEspecial = TipoDeArmaEspecial.CuraCompleta,
+                    CargasRestantes = 1
+                };
+            }
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
