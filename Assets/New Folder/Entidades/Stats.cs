@@ -58,6 +58,7 @@ namespace Entidades.All
                     else return true;
 
                 case Entidad.Enemigo1:
+                case Entidad.Enemigo2:
                     //Si es un player
                     if (causante.Struct_Stats.Entidad == Entidad.Player1) return true;
                     else if (causante.Struct_Stats.Entidad == Entidad.Player2) return true;
@@ -170,6 +171,7 @@ namespace Entidades.All
         {
             Struct_Stats.Nivel++;
             Struct_Stats.MaxSalud += 5;
+            Struct_Stats.Salud += 5;
             Struct_Stats.MaxExp += 10;
             Interfaz.GUISalud(this);
             Interfaz.GUINivel(this);
@@ -186,6 +188,11 @@ namespace Entidades.All
                 {
                     case Entidad.Enemigo1:
                         causante.RecibirExperiencia(10);
+                        DropObjetoAleatorio(2);
+                        break;
+                    case Entidad.Enemigo2:
+                        causante.RecibirExperiencia(20);
+                        DropObjetoAleatorio(2);
                         break;
                 }
             }
@@ -193,14 +200,49 @@ namespace Entidades.All
             SistemaDeControlGeneral.EliminarEntidad(this);
         }
 
+        private void DropObjetoAleatorio(int rango)
+        {
+            if (UnityEngine.Random.Range(0, rango) != 0) return;
+
+            switch(UnityEngine.Random.Range(0, Enum.GetNames(typeof(TipoObjeto)).Length))
+            {
+                case (int)TipoObjeto.ArmaBase:
+                    SistemaDeControlGeneral.InstanciarObjeto(TipoObjeto.ArmaBase, 0, transform.position, SistemaDeControlGeneral.SpritesArmas[0]);
+                    break;
+                case (int)TipoObjeto.ArmaTridireccional:
+                    SistemaDeControlGeneral.InstanciarObjeto(TipoObjeto.ArmaTridireccional, 0, transform.position, SistemaDeControlGeneral.SpritesArmas[1]);
+                    break;
+                case (int)TipoObjeto.ArmaOctaDireccional:
+                    SistemaDeControlGeneral.InstanciarObjeto(TipoObjeto.ArmaOctaDireccional, 0, transform.position, SistemaDeControlGeneral.SpritesArmas[2]);
+                    break;
+                case (int)TipoObjeto.Curacion:
+                    switch(UnityEngine.Random.Range(0, 1))
+                    {
+                        case 0:
+                            SistemaDeControlGeneral.InstanciarObjeto(TipoObjeto.Curacion, 10, transform.position, SistemaDeControlGeneral.SpritesCuras[0]);
+                            break;
+                        case 1:
+                            SistemaDeControlGeneral.InstanciarObjeto(TipoObjeto.Curacion, 50, transform.position, SistemaDeControlGeneral.SpritesCuras[1]);
+                            break;
+                    }
+                    break;
+                case (int)TipoObjeto.Experiencia:
+                    SistemaDeControlGeneral.InstanciarObjeto(TipoObjeto.Experiencia, 10, transform.position, SistemaDeControlGeneral.SpritesExperiencia[0]);
+                    break;
+
+            }
+        }
         #endregion
 
         //Iniciar entidad
         #region
+
+        //Armas
+        #region
         /// <summary>
-        /// Añade el arma inicial al player
+        /// Añade el arma inicial a la entidad
         /// </summary>
-        private void AñadirArmaInicial()
+        private void AñadirArma1()
         {
             Struct_Stats.Arma = new Arma()
             {
@@ -214,11 +256,32 @@ namespace Entidades.All
                 UltimoAtaque = 0,
             };
         }
+        /// <summary>
+        /// Añade el arma inicial a la entidad
+        /// </summary>
+        private void AñadirArma2()
+        {
+            Struct_Stats.Arma = new Arma()
+            {
+                Daño = SistemaDeControlGeneral.DañoProyectil,
+                EnEnfriamiento = false,
+                MaxRecalentamiento = 100,
+                Recalentamiento = 0,
+                TipoDeArma = TipoDeArma.Tridireccional,
+                UltimaVezReposada = 0,
+                VelocidadDeAtaque = 0.3f,
+                UltimoAtaque = 0,
+            };
+        }
 
+        #endregion
+
+        //Stats por nivel
+        #region
         /// <summary>
         /// Hace que la entidad suba al nivel 1
         /// </summary>
-        private void InicialNivel()
+        private void InicialNivel1()
         {
             Struct_Stats.Nivel = 1;
             Struct_Stats.Exp = 0;
@@ -226,6 +289,32 @@ namespace Entidades.All
             Struct_Stats.MaxSalud = 100;
             Struct_Stats.Salud = 100;
         }
+
+        /// <summary>
+        /// Hace que la entidad suba al nivel 1
+        /// </summary>
+        private void InicialNivel10()
+        {
+            Struct_Stats.Nivel = 10;
+            Struct_Stats.Exp = 0;
+            Struct_Stats.MaxExp = 100;
+            Struct_Stats.MaxSalud = 200;
+            Struct_Stats.Salud = 200;
+        }
+
+        /// <summary>
+        /// Hace que la entidad suba al nivel 100
+        /// </summary>
+        private void InicialNivelMax()
+        {
+            Struct_Stats.Nivel = 100;
+            Struct_Stats.Exp = 0;
+            Struct_Stats.MaxExp = 10;
+            Struct_Stats.MaxSalud = 32767;
+            Struct_Stats.Salud = 32767;
+        }
+
+        #endregion
 
         public void IniciarPlayer(Entidad Entidad, SistemaDeControlGeneral sistemaDeControlGeneral, Interfaz interfaz)
         {
@@ -250,8 +339,8 @@ namespace Entidades.All
                             SistemaDeControlGeneral = sistemaDeControlGeneral,
                         };
 
-                        InicialNivel();
-                        AñadirArmaInicial();
+                        InicialNivel1();
+                        AñadirArma1();
                     }
                     break;
                 case Entidad.Enemigo1:
@@ -264,8 +353,22 @@ namespace Entidades.All
                             SistemaDeControlGeneral = sistemaDeControlGeneral,
                         };
 
-                        InicialNivel();
-                        AñadirArmaInicial();
+                        InicialNivel1();
+                        AñadirArma1();
+                    }
+                    break;
+                case Entidad.Enemigo2:
+                    {
+                        //Iniciamos los controles
+                        ControlEnemigo = gameObject.AddComponent<ControlEnemigo>();
+                        ControlEnemigo.Stats = this;
+                        ControlEnemigo.Mecanicas = new Mecanicas()
+                        {
+                            SistemaDeControlGeneral = sistemaDeControlGeneral,
+                        };
+
+                        InicialNivel10();
+                        AñadirArma2();
                     }
                     break;
             }

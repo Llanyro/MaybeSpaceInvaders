@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
+using Objetos;
 using Entidades.All;
 using System.Collections.Generic;
 
 namespace Sistema
 {
-    enum Entidad { Player1, Player2, Enemigo1 }
+    enum Entidad { Player1, Player2, Enemigo1, Enemigo2 }
     class SistemaDeControlGeneral : MonoBehaviour
     {
         public Interfaz Interfaz { get; private set; }
@@ -30,13 +31,14 @@ namespace Sistema
 
         //Velocidad general de los proyectiles
         public float VelocidadMovimientoProyectil = 1;
-        public float VelocidadMovimientoProyectilEnemigo = 1;
+        public float VelocidadMovimientoObjetos = 1;
 
         //Daño general de los proyectiles
         public float DañoProyectil = 40;
 
         //Enemigos
-        public int MaxEnemigosTipo1 = 3;
+        public int Nivel = 1;
+        public int Ronda = 1;
 
         #endregion
 
@@ -44,10 +46,20 @@ namespace Sistema
         #region
         public GameObject Player;
         public GameObject Enemigo1;
+        public GameObject Enemigo2;
 
         public GameObject Proyectil1;
         public GameObject Proyectil2;
+        public GameObject ObjetoGenerico;
 
+
+        #endregion
+
+        //Sprites Recogidos Externamente
+        #region
+        public Sprite[] SpritesCuras;
+        public Sprite[] SpritesArmas;
+        public Sprite[] SpritesExperiencia;
 
         #endregion
 
@@ -74,7 +86,7 @@ namespace Sistema
 
         //Enemigos
         public List<GameObject> EnemigosTipo1 = new List<GameObject>();
-
+        public List<GameObject> EnemigosTipo2 = new List<GameObject>();
         #endregion
 
         //Funciones
@@ -87,8 +99,11 @@ namespace Sistema
         {
             switch (entidad)
             {
+                case Entidad.Enemigo2:
+                    EnemigosTipo2.Add(InicializarEntidad(Entidad.Enemigo2, Enemigo2, vector2));
+                    break;
                 case Entidad.Enemigo1:
-                    if(EnemigosTipo1.Count < MaxEnemigosTipo1) EnemigosTipo1.Add(InicializarEntidad(Entidad.Enemigo1, Enemigo1, vector2));
+                    EnemigosTipo1.Add(InicializarEntidad(Entidad.Enemigo1, Enemigo1, vector2));
                     break;
                 case Entidad.Player1:
                     if (Player1 == null)
@@ -115,6 +130,8 @@ namespace Sistema
             Stats stats = nuevaEntidad.AddComponent<Stats>();
             stats.IniciarPlayer(entidad, this, Interfaz);
 
+            nuevaEntidad.SetActive(true);
+
             return nuevaEntidad;
         }
 
@@ -129,6 +146,11 @@ namespace Sistema
             {
                 case Entidad.Enemigo1:
                     EnemigosTipo1.Remove(stats.gameObject);
+                    ComprobarParaContinuar();
+                    break;
+                case Entidad.Enemigo2:
+                    EnemigosTipo2.Remove(stats.gameObject);
+                    ComprobarParaContinuar();
                     break;
                 case Entidad.Player1:
                     Player1 = null;
@@ -146,8 +168,30 @@ namespace Sistema
 
         //Entidades objetos (inertes)
         #region
+        public void InstanciarObjeto(TipoObjeto tipoObjeto, int valor, Vector3 posicion, Sprite sprite)
+        {
+            //Instanciamos la entidad
+            GameObject nuevaEntidad = Instantiate(ObjetoGenerico);
+            nuevaEntidad.transform.localScale = new Vector3(EscalaX, EscalaY, 0);
+            nuevaEntidad.transform.position = posicion;
+            nuevaEntidad.GetComponent<SpriteRenderer>().sprite = sprite;
+
+            //Script
+            #region
+            Objeto objetoscript = nuevaEntidad.AddComponent<Objeto>();
+            objetoscript.Mecanicas = new Mecanicas()
+            {
+                SistemaDeControlGeneral = this
+            };
+            objetoscript.Velocidad = VelocidadMovimientoObjetos;
+            objetoscript.Valor = valor;
+            objetoscript.TipoObjeto = tipoObjeto;
+            #endregion
+
+            nuevaEntidad.SetActive(true);
+        }
         #endregion
-        
+
         //Inicializadores
         #region
         private void ActualizacionInicialJuego()
@@ -189,6 +233,8 @@ namespace Sistema
 
             BuscarReferencias();
             ActualizacionInicialJuego();
+
+            ContinuarJuego();
         }
 
         #endregion
@@ -206,12 +252,127 @@ namespace Sistema
             {
                 AñadirEntidad(Entidad.Player2, new Vector2(0, -((TamañoMapa * 7) / 10)));
             }
+        }
 
-            //Test 3
-            if(Input.GetKeyDown(KeyCode.Alpha3))
+
+        //Niveles
+        #region
+        private void ComprobarParaContinuar()
+        {
+            if (EnemigosTipo1.Count != 0)
             {
-                AñadirEntidad(Entidad.Enemigo1, new Vector2(0, ((TamañoMapa * 7) / 10)));
+                Debug.Log("EnemigosTipo1: " + EnemigosTipo1.Count);
+                return;
+            }
+            if (EnemigosTipo2.Count != 0)
+            {
+                Debug.Log("EnemigosTipo2: " + EnemigosTipo2.Count);
+                return;
+            }
+
+            Ronda++;
+            ContinuarJuego();
+        }
+        private void ContinuarJuego()
+        {
+            switch(Nivel)
+            {
+                case 0:
+                    IniciarRondaNivel0();
+                    break;
+                case 1:
+                    IniciarRondaNivel1();
+                    break;
             }
         }
+
+        private void IniciarRondaNivel0()
+        {
+            switch(Ronda)
+            {
+                case 0:
+                    InstanciarEnemigos(1, Entidad.Enemigo1);
+                    break;
+                case 1:
+                    InstanciarEnemigos(2, Entidad.Enemigo1);
+                    break;
+                case 2:
+                    InstanciarEnemigos(3, Entidad.Enemigo1);
+                    break;
+                case 3:
+                    InstanciarEnemigos(4, Entidad.Enemigo1);
+                    break;
+                case 4:
+                    InstanciarEnemigos(5, Entidad.Enemigo1);
+                    break;
+                case 5:
+                    InstanciarEnemigos(6, Entidad.Enemigo1);
+                    break;
+                case 6:
+                    InstanciarEnemigos(7, Entidad.Enemigo1);
+                    break;
+                case 7:
+                    Ronda = 0;
+                    Nivel++;
+                    ContinuarJuego();
+                    break;
+            }
+        }
+        private void IniciarRondaNivel1()
+        {
+            switch (Ronda)
+            {
+                case 0:
+                    InstanciarEnemigos(3, Entidad.Enemigo1);
+                    InstanciarEnemigos(2, Entidad.Enemigo2);
+                    break;
+                case 1:
+                    InstanciarEnemigos(2, Entidad.Enemigo1);
+                    InstanciarEnemigos(2, Entidad.Enemigo2);
+                    break;
+                case 2:
+                    InstanciarEnemigos(4, Entidad.Enemigo1);
+                    InstanciarEnemigos(4, Entidad.Enemigo2);
+                    break;
+                case 3:
+                    InstanciarEnemigos(5, Entidad.Enemigo1);
+                    InstanciarEnemigos(3, Entidad.Enemigo2);
+                    break;
+                case 4:
+                    InstanciarEnemigos(2, Entidad.Enemigo1);
+                    InstanciarEnemigos(4, Entidad.Enemigo2);
+                    break;
+                case 5:
+                    InstanciarEnemigos(6, Entidad.Enemigo1);
+                    InstanciarEnemigos(6, Entidad.Enemigo2);
+                    break;
+                case 6:
+                    InstanciarEnemigos(7, Entidad.Enemigo1);
+                    InstanciarEnemigos(7, Entidad.Enemigo2);
+                    break;
+                case 7:
+                    Ronda = 0;
+                    Nivel++;
+                    ContinuarJuego();
+                    break;
+            }
+        }
+
+
+
+        private void InstanciarEnemigos(int num, Entidad entidad)
+        {
+            if (num == 1) AñadirEntidad(entidad, new Vector2(0, ((TamañoMapa * 8) / 10)));
+            else
+            {
+                float distancia = (((TamañoMapa * 8) / 5) / (num - 1));
+                for (int i = 0; i < num; i++)
+                {
+                    AñadirEntidad(entidad, new Vector2(((TamañoMapa * 8) / 10) - (distancia * i), ((TamañoMapa * 8) / 10)));
+                }
+            }
+        }
+        #endregion
+
     }
 }

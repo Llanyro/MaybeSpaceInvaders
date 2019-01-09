@@ -83,7 +83,10 @@ namespace Sistema
                 #region
                 Proyectil proyectil = proyectilObj.AddComponent<Proyectil>();
                 proyectil.Causante = causante;
-                proyectil.Mecanicas = this;
+                proyectil.Mecanicas = new Mecanicas()
+                {
+                    SistemaDeControlGeneral = SistemaDeControlGeneral
+                };
                 proyectil.Velocidad = SistemaDeControlGeneral.VelocidadMovimientoProyectil;
                 proyectil.Direccion = direccion;
                 proyectil.Daño = causante.Struct_Stats.Arma.Daño;
@@ -165,7 +168,12 @@ namespace Sistema
         public void ReposarArma(Stats causante)
         {
             if (causante.Struct_Stats.Arma.UltimaVezReposada + 0.1f > Time.fixedTime) return;
-            if (causante.Struct_Stats.Arma.Recalentamiento <= 0) return;
+            if (causante.Struct_Stats.Arma.Recalentamiento < 0) return;
+            if (causante.Struct_Stats.Arma.Recalentamiento == 0)
+            {
+                causante.Struct_Stats.Arma.EnEnfriamiento = false;
+                return;
+            }
 
             causante.Struct_Stats.Arma.UltimaVezReposada = Time.fixedTime;
             causante.Struct_Stats.Arma.Recalentamiento--;
