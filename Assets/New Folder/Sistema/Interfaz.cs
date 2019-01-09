@@ -1,7 +1,8 @@
-﻿using Objetos;
+﻿using System;
+using Objetos;
 using UnityEngine;
-using UnityEngine.UI;
 using Entidades.All;
+using UnityEngine.UI;
 
 namespace Sistema
 {
@@ -9,6 +10,7 @@ namespace Sistema
     {
         //Player1
         #region
+        public GameObject Player1_IniciarPLayer;
         public GameObject Player1_PadreGui;
 
         public GameObject Player1_BG_Barra_Salud;
@@ -20,10 +22,17 @@ namespace Sistema
         public GameObject Player1_TextoExperiencia;
 
         public GameObject Player1_TextoNivel;
+
+        public GameObject Player1_BG_Barra_Recalentamiento;
+        public GameObject Player1_Barra_Recalentamiento;
+        public GameObject Player1_TextoRecalentamiento;
+        public GameObject Player1_TextoArmaEspecial;
+
         #endregion
 
         //Player2
         #region
+        public GameObject Player2_IniciarPLayer;
         public GameObject Player2_PadreGui;
 
         public GameObject Player2_BG_Barra_Salud;
@@ -35,6 +44,12 @@ namespace Sistema
         public GameObject Player2_TextoExperiencia;
 
         public GameObject Player2_TextoNivel;
+
+        public GameObject Player2_BG_Barra_Recalentamiento;
+        public GameObject Player2_Barra_Recalentamiento;
+        public GameObject Player2_TextoRecalentamiento;
+        public GameObject Player2_TextoArmaEspecial;
+
         #endregion
 
         //Interfaz players
@@ -45,9 +60,11 @@ namespace Sistema
             {
                 case Entidad.Player1:
                     Player1_PadreGui.SetActive(iniciar);
+                    Player1_IniciarPLayer.SetActive(!iniciar);
                     break;
                 case Entidad.Player2:
                     Player2_PadreGui.SetActive(iniciar);
+                    Player2_IniciarPLayer.SetActive(!iniciar);
                     break;
             }
         }
@@ -57,8 +74,29 @@ namespace Sistema
             GUISalud(stats);
             GUIExperiencia(stats);
             GUINivel(stats);
+            GUIArma(stats);
         }
 
+        public void GUIArma(Stats stats)
+        {
+            switch (stats.Struct_Stats.Entidad)
+            {
+                case Entidad.Player1:
+                    Player1_Barra_Recalentamiento.GetComponent<Image>().fillAmount = (stats.Struct_Stats.Arma.Recalentamiento / (float)stats.Struct_Stats.Arma.MaxRecalentamiento);
+                    Player1_TextoRecalentamiento.GetComponent<Text>().text = stats.Struct_Stats.Arma.Recalentamiento.ToString();
+                    Player1_TextoArmaEspecial.GetComponent<Text>().text = 
+                        Enum.GetName(typeof(TipoDeArmaEspecial), stats.Struct_Stats.ArmaEspecial.TipoDeArmaEspecial) +
+                        ": " + stats.Struct_Stats.ArmaEspecial.CargasRestantes;
+                    break;
+                case Entidad.Player2:
+                    Player2_Barra_Recalentamiento.GetComponent<Image>().fillAmount = (stats.Struct_Stats.Arma.Recalentamiento / (float)stats.Struct_Stats.Arma.MaxRecalentamiento);
+                    Player2_TextoRecalentamiento.GetComponent<Text>().text = stats.Struct_Stats.Arma.Recalentamiento.ToString();
+                    Player2_TextoArmaEspecial.GetComponent<Text>().text = 
+                        Enum.GetName(typeof(TipoDeArmaEspecial), stats.Struct_Stats.ArmaEspecial.TipoDeArmaEspecial) +
+                        ": " + stats.Struct_Stats.ArmaEspecial.CargasRestantes;
+                    break;
+            }
+        }
         public void GUISalud(Stats stats)
         {
             switch(stats.Struct_Stats.Entidad)

@@ -110,7 +110,7 @@ namespace Sistema
                         Player1 = InicializarEntidad(entidad, Player, vector2);
                     break;
                 case Entidad.Player2:
-                    if (Player2 != null)
+                    if (Player2 == null)
                         Player2 = InicializarEntidad(entidad, Player, vector2);
                     break;
             }

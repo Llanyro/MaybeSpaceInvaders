@@ -68,6 +68,7 @@ namespace Entidades.Player
 
                 if (Input.GetKeyDown(KeyCode.RightControl)) Mecanicas.UsarArmaEspecial(Stats);
             }
+            Stats.Interfaz.GUIArma(Stats);
         }
 
         private void Update()
