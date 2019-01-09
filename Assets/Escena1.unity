@@ -408,11 +408,12 @@ MonoBehaviour:
   VelocidadMovimientoProyectil: 41
   VelocidadMovimientoObjetos: 20
   "Da\xF1oProyectil": 40
-  MaxEnemigosTipo1: 10
-  Nivel: 0
+  Nivel: 1
   Ronda: 0
   Player: {fileID: 1281332805985352, guid: e8dc078d3971bf6438cfeef527dd38f6, type: 3}
   Enemigo1: {fileID: 1610982819565586, guid: 3e8fff465baf71846ad29e5a3eeca049, type: 3}
+  Enemigo2: {fileID: 2087457868143170130, guid: 4430d67bc7fa5a14992d612562c1c57f,
+    type: 3}
   Proyectil1: {fileID: 1206355819646038, guid: b3162d0b7bdaa774893d570f0652b4b4, type: 3}
   Proyectil2: {fileID: 0}
   ObjetoGenerico: {fileID: 1979756445409180, guid: ba955aef7ad67754098d3483331c5c93,
@@ -427,6 +428,7 @@ MonoBehaviour:
   SpritesExperiencia:
   - {fileID: 21300000, guid: 5db0d17cd038b944998d8b2e526c6034, type: 3}
   EnemigosTipo1: []
+  EnemigosTipo2: []
 --- !u!4 &256725450
 Transform:
   m_ObjectHideFlags: 0

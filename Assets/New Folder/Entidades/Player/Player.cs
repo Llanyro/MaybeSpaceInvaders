@@ -51,17 +51,22 @@ namespace Entidades.Player
             Mecanicas.Mover(transform, direccion, Stats.Struct_Stats.VelocidadMovimiento);
         }
 
+        //Usa el arma o el arma especial
         private void Disparar()
         {
             if (Stats.Struct_Stats.Entidad == Entidad.Player1)
             {
                 if (Input.GetKey(KeyCode.Space)) Mecanicas.UsarArma(Stats, false);
                 else Mecanicas.ReposarArma(Stats);
+
+                if (Input.GetKeyDown(KeyCode.F)) Mecanicas.UsarArmaEspecial(Stats);
             }
             else if(Stats.Struct_Stats.Entidad == Entidad.Player2)
             {
                 if (Input.GetKey(KeyCode.RightShift)) Mecanicas.UsarArma(Stats, false);
                 else Mecanicas.ReposarArma(Stats);
+
+                if (Input.GetKeyDown(KeyCode.RightControl)) Mecanicas.UsarArmaEspecial(Stats);
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using Entidades.All;
 using UnityEngine;
 using Objetos;
+using System.Collections.Generic;
 
 namespace Sistema
 {
@@ -58,6 +59,8 @@ namespace Sistema
             transform.Translate(direccion * VelocidadMovimiento * Time.deltaTime);
         }
 
+        //Armas
+        #region
         //Disparar
         private void DispararProyectilBase(Stats causante, Transform posicionDelCausante, Vector2[] direcciones )
         {
@@ -178,5 +181,81 @@ namespace Sistema
             causante.Struct_Stats.Arma.UltimaVezReposada = Time.fixedTime;
             causante.Struct_Stats.Arma.Recalentamiento--;
         }
+        #endregion
+
+        //Armas especiales
+        public void UsarArmaEspecial(Stats causante)
+        {
+            if (causante.Struct_Stats.ArmaEspecial.CargasRestantes <= 0) return;
+
+            switch(causante.Struct_Stats.ArmaEspecial.TipoDeArmaEspecial)
+            {
+                case TipoDeArmaEspecial.CuraCompleta:
+                    {
+                        if (SistemaDeControlGeneral.Player1 != null)
+                        {
+                            Stats Stats = SistemaDeControlGeneral.Player1.GetComponent<Stats>();
+                            Stats.Struct_Stats.Salud = Stats.Struct_Stats.MaxSalud;
+                            Stats.RecibirCuracion(0);
+                        }
+                        if (SistemaDeControlGeneral.Player2 != null)
+                        {
+                            Stats Stats = SistemaDeControlGeneral.Player2.GetComponent<Stats>();
+                            Stats.Struct_Stats.Salud = Stats.Struct_Stats.MaxSalud;
+                            Stats.RecibirCuracion(0);
+                        }
+                    }
+                    break;
+                case TipoDeArmaEspecial.FullClear:
+                    {
+                        if (SistemaDeControlGeneral.EnemigosTipo1.Count > 0)
+                        {
+                            while (SistemaDeControlGeneral.EnemigosTipo1.Count != 0)
+                            {
+                                Stats Stats = SistemaDeControlGeneral.EnemigosTipo1[0].GetComponent<Stats>();
+                                Stats.Struct_Stats.Salud = 0;
+                                Stats.RecibirDaño(0, causante);
+                            }
+                        }
+                        if (SistemaDeControlGeneral.EnemigosTipo2.Count > 0)
+                        {
+                            while (SistemaDeControlGeneral.EnemigosTipo2.Count != 0)
+                            {
+                                Stats Stats = SistemaDeControlGeneral.EnemigosTipo2[0].GetComponent<Stats>();
+                                Stats.Struct_Stats.Salud = 0;
+                                Stats.RecibirDaño(0, causante);
+                            }
+                        }
+                    }
+                    break;
+                case TipoDeArmaEspecial.Clear:
+                    {
+                        /*RaycastHit2D[] raycastHits = Physics2D.RaycastAll(causante.transform.position, causante.transform.forward);
+                        List<GameObject> enemigos = new List<GameObject>();
+
+                        foreach (RaycastHit2D hit2D in raycastHits)
+                            if (hit2D.transform.tag == "Enemigo") enemigos.Add(hit2D.transform.gameObject);
+
+                        Debug.Log("Punto asdfv");
+                        if (enemigos.Count > 0)
+                        {
+                            Debug.Log("Punto 1: " + enemigos.Count);
+                            while (enemigos.Count != 0)
+                            {
+                                Stats Stats = enemigos[0].GetComponent<Stats>();
+                                Stats.Struct_Stats.Salud = 0;
+                                Stats.RecibirDaño(0, causante);
+                                Debug.Log("Punto: " + enemigos.Count);
+                                enemigos.Remove(enemigos[0]);
+                                Debug.Log("Punto: " + enemigos.Count);
+                            }
+                        }*/
+                    }
+                    break;
+            }
+
+            causante.Struct_Stats.ArmaEspecial.CargasRestantes--;
+        }
+
     }
 }

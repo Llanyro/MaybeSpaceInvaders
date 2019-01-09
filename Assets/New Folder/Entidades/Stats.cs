@@ -24,6 +24,7 @@ namespace Entidades.All
         public int MaxExp { get; set; }
 
         public Arma Arma;
+        public ArmaEspecial ArmaEspecial;
         public float VelocidadMovimiento { get; set; }
     }
 
@@ -108,8 +109,6 @@ namespace Entidades.All
         /// </summary>
         public void RecibirDaño(int cantidad, Stats causante)
         {
-            if (cantidad <= 0) return;
-
             Struct_Stats.Salud -= cantidad;
 
             VariacionSalud(causante);
@@ -175,6 +174,8 @@ namespace Entidades.All
             Struct_Stats.MaxExp += 10;
             Interfaz.GUISalud(this);
             Interfaz.GUINivel(this);
+
+            if (Struct_Stats.Nivel % 10 == 0) Struct_Stats.ArmaEspecial.CargasRestantes++;
         }
 
         /// <summary>
@@ -276,6 +277,35 @@ namespace Entidades.All
 
         #endregion
 
+        //Armas especiales
+        #region
+        private void ArmaEspecialCura()
+        {
+            Struct_Stats.ArmaEspecial = new ArmaEspecial()
+            {
+                CargasRestantes = 1,
+                TipoDeArmaEspecial = TipoDeArmaEspecial.CuraCompleta
+            };
+        }
+        private void ArmaEspecialFullClear()
+        {
+            Struct_Stats.ArmaEspecial = new ArmaEspecial()
+            {
+                CargasRestantes = 1,
+                TipoDeArmaEspecial = TipoDeArmaEspecial.FullClear
+            };
+        }
+        private void ArmaEspecialClear()
+        {
+            Struct_Stats.ArmaEspecial = new ArmaEspecial()
+            {
+                CargasRestantes = 1,
+                TipoDeArmaEspecial = TipoDeArmaEspecial.Clear
+            };
+        }
+
+        #endregion
+
         //Stats por nivel
         #region
         /// <summary>
@@ -341,6 +371,7 @@ namespace Entidades.All
 
                         InicialNivel1();
                         AñadirArma1();
+                        ArmaEspecialFullClear();
                     }
                     break;
                 case Entidad.Enemigo1:
@@ -355,6 +386,7 @@ namespace Entidades.All
 
                         InicialNivel1();
                         AñadirArma1();
+                        ArmaEspecialCura();
                     }
                     break;
                 case Entidad.Enemigo2:
@@ -369,6 +401,7 @@ namespace Entidades.All
 
                         InicialNivel10();
                         AñadirArma2();
+                        ArmaEspecialCura();
                     }
                     break;
             }

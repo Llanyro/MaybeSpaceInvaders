@@ -259,16 +259,8 @@ namespace Sistema
         #region
         private void ComprobarParaContinuar()
         {
-            if (EnemigosTipo1.Count != 0)
-            {
-                Debug.Log("EnemigosTipo1: " + EnemigosTipo1.Count);
-                return;
-            }
-            if (EnemigosTipo2.Count != 0)
-            {
-                Debug.Log("EnemigosTipo2: " + EnemigosTipo2.Count);
-                return;
-            }
+            if (EnemigosTipo1.Count != 0) return;
+            if (EnemigosTipo2.Count != 0) return;
 
             Ronda++;
             ContinuarJuego();

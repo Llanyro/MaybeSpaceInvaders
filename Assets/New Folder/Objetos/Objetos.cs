@@ -8,6 +8,7 @@ using Entidades.All;
 /// </summary>
 
 enum TipoDeArma { Base, Tridireccional, OctaDireccional }
+enum TipoDeArmaEspecial { CuraCompleta, Clear, FullClear }
 enum TipoObjeto { ArmaBase, ArmaTridireccional, ArmaOctaDireccional, Curacion, Experiencia }
 namespace Objetos
 {
@@ -166,4 +167,12 @@ namespace Objetos
         public bool EnEnfriamiento { get; set; }
 
     }
+
+    [Serializable]
+    class ArmaEspecial
+    {
+        public TipoDeArmaEspecial TipoDeArmaEspecial { get; set; }
+        public int CargasRestantes { get; set; }
+    }
+
 }
