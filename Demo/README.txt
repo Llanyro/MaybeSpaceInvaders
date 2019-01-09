@@ -1,3 +1,4 @@
+El video de explicacion es: https://www.youtube.com/watch?v=B-xzNBnVjFI&feature=youtu.be
 El video ademas de servir como representacion grafica del uso de la aplicacion, explica algunas cosas del juego
 Aun asi dejare algunos datos por aqui.
 	-Puden jugar hasta 2 players
