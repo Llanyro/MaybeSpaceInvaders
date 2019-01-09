@@ -2,33 +2,14 @@
 using UnityEngine;
 using Objetos;
 using System.Collections.Generic;
+using System;
 
 namespace Sistema
 {
+    [Serializable]
     class Mecanicas
     {
         public SistemaDeControlGeneral SistemaDeControlGeneral { get; set; }
-
-        /// <summary>
-        /// Mueve un objeto de manera vertical segun el valor que decidammos
-        /// </summary>
-        private void MovimientoVertical(Transform transformObjeto, float value)
-        {
-            if (value > 0) if ((transformObjeto.position.y + (Time.deltaTime * value)) >= SistemaDeControlGeneral.TamañoMapa) return;
-            if (value < 0) if ((transformObjeto.position.y + (Time.deltaTime * value)) <= -SistemaDeControlGeneral.TamañoMapa) return;
-
-            transformObjeto.Translate(0, Time.deltaTime * value, 0);
-        }
-        /// <summary>
-        /// Mueve un objeto de manera horizontal segun el valor que decidammos
-        /// </summary>
-        private void MovimientoHorizontal(Transform transformObjeto, float value)
-        {
-            if (value > 0) if ((transformObjeto.position.x + (Time.deltaTime * value)) >= SistemaDeControlGeneral.TamañoMapa) return;
-            if (value < 0) if ((transformObjeto.position.x + (Time.deltaTime * value)) <= -SistemaDeControlGeneral.TamañoMapa) return;
-
-            transformObjeto.Translate(Time.deltaTime * value, 0, 0);
-        }
 
         //Movimiento de los objetos, players y Enemigos
         //public void Mover(Transform transform, Direccion direccion, float VelocidadMovimiento);
@@ -70,7 +51,7 @@ namespace Sistema
                 float varDistancia = ((3 * SistemaDeControlGeneral.TamañoMapa)  / 55);
 
                 //Inicializa el proyectil
-                GameObject proyectilObj = Object.Instantiate(SistemaDeControlGeneral.Proyectil1);
+                GameObject proyectilObj = UnityEngine.Object.Instantiate(SistemaDeControlGeneral.Proyectil1);
 
                 //Posicion, rotacion y escala
                 #region
@@ -183,6 +164,9 @@ namespace Sistema
         }
         #endregion
 
+
+        public List<GameObject> enemigos = new List<GameObject>();
+
         //Armas especiales
         public void UsarArmaEspecial(Stats causante)
         {
@@ -208,33 +192,31 @@ namespace Sistema
                     break;
                 case TipoDeArmaEspecial.FullClear:
                     {
-                        if (SistemaDeControlGeneral.EnemigosTipo1.Count > 0)
+                        while (SistemaDeControlGeneral.EnemigosTipo1.Count != 0)
                         {
-                            while (SistemaDeControlGeneral.EnemigosTipo1.Count != 0)
-                            {
-                                Stats Stats = SistemaDeControlGeneral.EnemigosTipo1[0].GetComponent<Stats>();
-                                Stats.Struct_Stats.Salud = 0;
-                                Stats.RecibirDaño(0, causante);
-                            }
+                            Stats Stats = SistemaDeControlGeneral.EnemigosTipo1[0].GetComponent<Stats>();
+                            Stats.Struct_Stats.Salud = 0;
+                            Stats.RecibirDaño(0, causante);
                         }
-                        if (SistemaDeControlGeneral.EnemigosTipo2.Count > 0)
+                        while (SistemaDeControlGeneral.EnemigosTipo2.Count != 0)
                         {
-                            while (SistemaDeControlGeneral.EnemigosTipo2.Count != 0)
-                            {
-                                Stats Stats = SistemaDeControlGeneral.EnemigosTipo2[0].GetComponent<Stats>();
-                                Stats.Struct_Stats.Salud = 0;
-                                Stats.RecibirDaño(0, causante);
-                            }
+                            Stats Stats = SistemaDeControlGeneral.EnemigosTipo2[0].GetComponent<Stats>();
+                            Stats.Struct_Stats.Salud = 0;
+                            Stats.RecibirDaño(0, causante);
                         }
                     }
                     break;
                 case TipoDeArmaEspecial.Clear:
                     {
-                        /*RaycastHit2D[] raycastHits = Physics2D.RaycastAll(causante.transform.position, causante.transform.forward);
-                        List<GameObject> enemigos = new List<GameObject>();
+                        /*Debug.DrawRay(causante.transform.position, causante.transform.forward);
+                        RaycastHit2D[] raycastHits = Physics2D.RaycastAll(causante.transform.position, causante.transform.forward);
+
+                        //List<GameObject> enemigos = new List<GameObject>();
 
                         foreach (RaycastHit2D hit2D in raycastHits)
                             if (hit2D.transform.tag == "Enemigo") enemigos.Add(hit2D.transform.gameObject);
+
+
 
                         Debug.Log("Punto asdfv");
                         if (enemigos.Count > 0)
